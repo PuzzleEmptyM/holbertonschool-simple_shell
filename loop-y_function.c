@@ -16,7 +16,7 @@ int main() {
     char* token;   /* Moved declaration here */
 
     while (1) {
-        printf("SimpleShell> ");
+        printf("Shellby UWU> ");
         fflush(stdout); /* Make sure the prompt is displayed before reading input */
 
         /* Check if Ctrl+D (EOF) is encountered */
