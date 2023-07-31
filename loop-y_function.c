@@ -25,7 +25,7 @@ int main() {
 
         /* Tokenize the input into separate arguments */
         token = strtok(input, " ");
-        argCount = 0;  // Initializing here
+        argCount = 0;
         while (token != NULL && argCount < MAX_ARGS - 1) {
             args[argCount++] = token;
             token = strtok(NULL, " ");
