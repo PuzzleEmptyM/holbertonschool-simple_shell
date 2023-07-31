@@ -7,16 +7,18 @@
 #define MAX_COMMAND_LENGTH 100
 #define MAX_ARGS 10
 
+extern char **environ; /* To access the environment variables */
+
 int main() {
     char input[MAX_COMMAND_LENGTH];
     char* args[MAX_ARGS];
     int status;
     pid_t pid;
-    int argCount;  /* Moved declaration here */
-    char* token;   /* Moved declaration here */
+    int argCount;
+    char* token;
 
     while (1) {
-        printf("Shellby UWU> ");
+        printf("ShellbyUWU: ");
         fflush(stdout); /* Make sure the prompt is displayed before reading input */
 
         /* Check if Ctrl+D (EOF) is encountered */
@@ -30,12 +32,12 @@ int main() {
 
         /* Tokenize the input into separate arguments */
         token = strtok(input, " ");
-        argCount = 0;  /* Initializing here */
+        argCount = 0;
         while (token != NULL && argCount < MAX_ARGS - 1) {
             args[argCount++] = token;
             token = strtok(NULL, " ");
         }
-        args[argCount] = NULL; /* The last argument must be NULL for execv */
+        args[argCount] = NULL;
 
         /* Check for the exit command */
         if (strcmp(args[0], "exit") == 0) {
@@ -48,19 +50,16 @@ int main() {
             exit(EXIT_FAILURE);
         } else if (pid == 0) {
             /* Child process */
-            if (execv(args[0], args) == -1) {
-                perror("execv");
+            char* path = getenv("PATH");
+            char fullPath[MAX_COMMAND_LENGTH];
+            snprintf(fullPath, sizeof(fullPath), "%s/%s", strtok(path, ":"), args[0]);
+            if (execve(fullPath, args, environ) == -1) {
+                perror("execve");
                 exit(EXIT_FAILURE);
             }
         } else {
             /* Parent process */
             wait(&status);
-
-            /* Wait for the user to press Enter before displaying the prompt again */
-            printf("\nPress Enter to continue...");
-            fflush(stdout);
-            getchar();
-            printf("\n");
         }
     }
 
