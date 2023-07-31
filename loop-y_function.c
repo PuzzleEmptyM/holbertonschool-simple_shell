@@ -12,8 +12,8 @@ int main() {
     char* args[MAX_ARGS];
     int status;
     pid_t pid;
-    int argCount;  // Moved declaration here
-    char* token;   // Moved declaration here
+    int argCount;
+    char* token;
 
     while (1) {
         printf("SimpleShell> ");
