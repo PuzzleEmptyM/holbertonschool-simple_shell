@@ -19,7 +19,7 @@ int main() {
         printf("SimpleShell> ");
         fflush(stdout); /* Make sure the prompt is displayed before reading input */
 
-        // Check if Ctrl+D (EOF) is encountered
+        /* Check if Ctrl+D (EOF) is encountered */
         if (fgets(input, sizeof(input), stdin) == NULL) {
             printf("\n");
             break;
