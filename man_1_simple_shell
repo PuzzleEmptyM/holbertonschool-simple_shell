@@ -1,0 +1,25 @@
+.TH simple_shell 1 simple_shell\-0.1
+.SH NAME
+simple_shell \- a simplified clone of print format.
+.SH SYNOPSIS
+.B simple_shell has no flags available.
+.SH DESCRIPTION
+.B simple_shell is a simplified version of printf. It is used for formatted output. _printf formats and prints the data according to the format string, producing output on the console or other output streams. Included format specifiers are %d, %i, %c, and %s. More information can be found below.
+.SH OPTIONS
+.B simple_shell
+.TP 
+.B %d
+prints a decimal\n
+.TP
+.B %i 
+prints an integer(int)\n
+.TP
+.B %c
+prints a single character(char)\n
+.TP
+.B %s
+prints a string by incrementing one by character at a time until it hits NULL.\n
+.SH FLOWCHART
+.B https://docs.google.com/presentation/d/1qOMmEtj5uHuB0THS5q7_AN3OYVMsIjzHthl4KhqF3lg/edit?usp=sharing
+.SH AUTHORS
+.B Jake Velasquez, Puzzle Moser, Jagger VanWinkle
