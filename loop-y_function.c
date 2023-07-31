@@ -12,7 +12,8 @@ int main() {
     char* args[MAX_ARGS];
     int status;
     pid_t pid;
-    char* token;
+    int argCount;  // Moved declaration here
+    char* token;   // Moved declaration here
 
     while (1) {
         printf("SimpleShell> ");
@@ -24,7 +25,7 @@ int main() {
 
         /* Tokenize the input into separate arguments */
         token = strtok(input, " ");
-        int argCount = 0;
+        argCount = 0;  // Initializing here
         while (token != NULL && argCount < MAX_ARGS - 1) {
             args[argCount++] = token;
             token = strtok(NULL, " ");
