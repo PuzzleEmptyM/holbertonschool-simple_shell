@@ -83,7 +83,6 @@ int main()
             /* Parent process */
             wait(&status);
         }
-        fflush(stdout); /* Make sure the prompt is displayed before reading input */
     }
 
     return 0;
