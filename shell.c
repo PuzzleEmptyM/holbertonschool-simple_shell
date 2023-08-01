@@ -15,8 +15,10 @@ int main()
     char* args[MAX_ARGS];
     int status;
     pid_t pid;
-    int argCount;
-    char* token;
+    /* int argCount;
+    char* token; */
+
+    char* last_slash;
 
     char* search_dirs[] = {"/bin", "/usr/bin", NULL}; /* Add more directories if needed */
 
@@ -35,14 +37,18 @@ int main()
         input[strcspn(input, "\n")] = '\0';
 
         /* Tokenize the input into separate arguments */
-        token = strtok(input, " ");
-        argCount = 0;
-        while (token != NULL && argCount < MAX_ARGS)
+	
+	/* Find the last occurrence of '/' in the input */
+        last_slash = strrchr(input, '/');
+        if (last_slash != NULL)
 	{
-            args[argCount++] = token;
-            token = strtok(NULL, " ");
+           /* Set the command to the substring after the last '/' */
+           args[0] = last_slash + 1;
+	} else {
+            /* If there is no '/', set the command to the entire input */
+            args[0] = input;
         }
-        args[argCount] = NULL;
+        args[1] = NULL;
 
         /* Check for the exit command */
         if (strcmp(args[0], "exit") == 0)
