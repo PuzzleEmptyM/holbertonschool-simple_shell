@@ -64,6 +64,12 @@ int main()
         /* Remove the newline character from the input */
         input[strcspn(input, "\n")] = '\0';
 
+	/* Skip processing if input is empty */
+	if (strlen(input) == 0)
+	{
+		continue;
+	}
+
         /* Tokenize the input into separate arguments */
         token = strtok(input, " ");
         argCount = 0;
