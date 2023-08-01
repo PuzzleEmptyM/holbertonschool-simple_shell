@@ -7,28 +7,56 @@
 #define MAX_COMMAND_LENGTH 100
 #define MAX_ARGS 10
 
-extern char **environ; /*To access the enviroment variables */
+extern char **environ; /* To access the environment variables */
+
+void handle_builtin_command(char *command, char **args)
+{
+    if (strcmp(command, "exit") == 0)
+    {
+        exit(EXIT_SUCCESS);
+    }
+    else if (strcmp(command, "cd") == 0)
+    {
+        if (args[1] != NULL)
+        {
+            if (chdir(args[1]) != 0)
+            {
+                perror("cd");
+            }
+        }
+    }
+    else
+    {
+        fprintf(stderr, "%s: command not found\n", command);
+    }
+}
+
+int is_builtin_command(char *command)
+{
+    if (strcmp(command, "exit") == 0 || strcmp(command, "cd") == 0)
+    {
+        return 1;
+    }
+    return 0;
+}
 
 int main()
 {
     char input[MAX_COMMAND_LENGTH];
-    char* args[MAX_ARGS];
+    char *args[MAX_ARGS];
     int status;
     pid_t pid;
-    /* int argCount;
-    char* token; */
-
-    char* last_slash;
-
-    char* search_dirs[] = {"/bin", "/usr/bin", NULL}; /* Add more directories if needed */
+    int argCount;
+    char *token;
 
     while (1)
     {
         printf("ShellbyUWU: ");
+        fflush(stdout); /* Make sure the prompt is displayed before reading input */
 
         /* Check if Ctrl+D (EOF) is encountered */
         if (fgets(input, sizeof(input), stdin) == NULL)
-	{
+        {
             printf("\n");
             break;
         }
@@ -37,61 +65,49 @@ int main()
         input[strcspn(input, "\n")] = '\0';
 
         /* Tokenize the input into separate arguments */
-	
-	/* Find the last occurrence of '/' in the input */
-        last_slash = strrchr(input, '/');
-        if (last_slash != NULL)
-	{
-           /* Set the command to the substring after the last '/' */
-           args[0] = last_slash + 1;
-	} else {
-            /* If there is no '/', set the command to the entire input */
-            args[0] = input;
+        token = strtok(input, " ");
+        argCount = 0;
+        while (token != NULL && argCount < MAX_ARGS - 1)
+        {
+            args[argCount++] = token;
+            token = strtok(NULL, " ");
         }
-        args[1] = NULL;
+        args[argCount] = NULL;
 
         /* Check for the exit command */
         if (strcmp(args[0], "exit") == 0)
-	{
-            break;
+        {
+            exit(EXIT_SUCCESS);
+        }
+
+        /* Check for built-in commands */
+        if (is_builtin_command(args[0]))
+        {
+            handle_builtin_command(args[0], args);
+            continue; /* Continue to the next iteration of the loop */
         }
 
         pid = fork();
         if (pid < 0)
-	{
+        {
             perror("fork");
             exit(EXIT_FAILURE);
         }
-	else if (pid == 0)
-	{
+        else if (pid == 0)
+        {
             /* Child process */
-            char fullPath[MAX_COMMAND_LENGTH];
-            int i = 0;
-            while (search_dirs[i] != NULL)
-	    {
-                snprintf(fullPath, sizeof(fullPath), "%s/%s", search_dirs[i], args[0]);
-                if (access(fullPath, X_OK) == 0)
-		{
-                    if (execve(fullPath, args, environ) == -1)
-		    {
-                        perror("execve");
-                        exit(EXIT_FAILURE);
-                    }
-                }
-                i++;
+            if (execvp(args[0], args) == -1)
+            {
+                perror("execvp");
+                exit(EXIT_FAILURE);
             }
-            /* If the loop completes, the command was not found */
-            fprintf(stderr, "%s: command not found\n", args[0]);
-            exit(EXIT_FAILURE);
         }
-       	else
-       	{
+        else
+        {
             /* Parent process */
             wait(&status);
-    	}
-        fflush(stdout); /* Make sure the prompt is displayed before reading input */
+        }
     }
 
     return 0;
 }
-
