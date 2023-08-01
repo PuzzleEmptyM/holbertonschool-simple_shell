@@ -57,7 +57,7 @@ int main()
         /* Check if Ctrl+D (EOF) is encountered */
         if (fgets(input, sizeof(input), stdin) == NULL)
         {
-            printf("\n");
+            /*printf("\n");*/
             break;
         }
 
