@@ -51,7 +51,7 @@ int main()
 
     while (1)
     {
-        printf("$ ");
+        /* printf("$ "); */
         fflush(stdout); /* Make sure the prompt is displayed before reading input */
 
         /* Check if Ctrl+D (EOF) is encountered */
