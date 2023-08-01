@@ -7,9 +7,8 @@
 #define MAX_COMMAND_LENGTH 100
 #define MAX_ARGS 10
 
-extern char **environ; /* To access the environment variables */
-
-int main() {
+int main()
+{
     char input[MAX_COMMAND_LENGTH];
     char* args[MAX_ARGS];
     int status;
@@ -17,12 +16,16 @@ int main() {
     int argCount;
     char* token;
 
-    while (1) {
+    char* search_dirs[] = {"/bin", "/usr/bin", NULL}; /* Add more directories if needed */
+
+    while (1)
+    {
         printf("ShellbyUWU: ");
         fflush(stdout); /* Make sure the prompt is displayed before reading input */
 
         /* Check if Ctrl+D (EOF) is encountered */
-        if (fgets(input, sizeof(input), stdin) == NULL) {
+        if (fgets(input, sizeof(input), stdin) == NULL)
+	{
             printf("\n");
             break;
         }
@@ -33,31 +36,49 @@ int main() {
         /* Tokenize the input into separate arguments */
         token = strtok(input, " ");
         argCount = 0;
-        while (token != NULL && argCount < MAX_ARGS - 1) {
+        while (token != NULL && argCount < MAX_ARGS - 1)
+	{
             args[argCount++] = token;
             token = strtok(NULL, " ");
         }
         args[argCount] = NULL;
 
         /* Check for the exit command */
-        if (strcmp(args[0], "exit") == 0) {
+        if (strcmp(args[0], "exit") == 0)
+	{
             break;
         }
 
         pid = fork();
-        if (pid < 0) {
+        if (pid < 0)
+	{
             perror("fork");
             exit(EXIT_FAILURE);
-        } else if (pid == 0) {
+        }
+	else if (pid == 0)
+	{
             /* Child process */
-            char* path = getenv("PATH");
             char fullPath[MAX_COMMAND_LENGTH];
-            snprintf(fullPath, sizeof(fullPath), "%s/%s", strtok(path, ":"), args[0]);
-            if (execve(fullPath, args, environ) == -1) {
-                perror("execve");
-                exit(EXIT_FAILURE);
+            int i = 0;
+            while (search_dirs[i] != NULL)
+	    {
+                snprintf(fullPath, sizeof(fullPath), "%s/%s", search_dirs[i], args[0]);
+                if (access(fullPath, X_OK) == 0)
+		{
+                    if (execve(fullPath, args, environ) == -1)
+		    {
+                        perror("execve");
+                        exit(EXIT_FAILURE);
+                    }
+                }
+                i++;
             }
-        } else {
+            /* If the loop completes, the command was not found */
+            fprintf(stderr, "%s: command not found\n", args[0]);
+            exit(EXIT_FAILURE);
+        }
+       	else
+       	{
             /* Parent process */
             wait(&status);
         }
