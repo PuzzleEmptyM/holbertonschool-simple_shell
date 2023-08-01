@@ -7,6 +7,8 @@
 #define MAX_COMMAND_LENGTH 100
 #define MAX_ARGS 10
 
+extern char **environ; /*To access the enviroment variables */
+
 int main()
 {
     char input[MAX_COMMAND_LENGTH];
