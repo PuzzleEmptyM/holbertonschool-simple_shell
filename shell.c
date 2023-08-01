@@ -37,7 +37,7 @@ int main()
         /* Tokenize the input into separate arguments */
         token = strtok(input, " ");
         argCount = 0;
-        while (token != NULL && argCount < MAX_ARGS - 1)
+        while (token != NULL && argCount < MAX_ARGS)
 	{
             args[argCount++] = token;
             token = strtok(NULL, " ");
@@ -82,7 +82,8 @@ int main()
        	{
             /* Parent process */
             wait(&status);
-        }
+    	}
+        fflush(stdout); /* Make sure the prompt is displayed before reading input */
     }
 
     return 0;
