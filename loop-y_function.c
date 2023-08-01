@@ -23,7 +23,6 @@ int main()
     while (1)
     {
         printf("ShellbyUWU: ");
-        fflush(stdout); /* Make sure the prompt is displayed before reading input */
 
         /* Check if Ctrl+D (EOF) is encountered */
         if (fgets(input, sizeof(input), stdin) == NULL)
@@ -84,6 +83,7 @@ int main()
             /* Parent process */
             wait(&status);
         }
+        fflush(stdout); /* Make sure the prompt is displayed before reading input */
     }
 
     return 0;
