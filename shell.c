@@ -38,7 +38,6 @@ int main(int ac, char **av, char **env)
         /* Check if Ctrl+D (EOF) is encountered */
         if (fgets(input, sizeof(input), stdin) == NULL)
         {
-            printf("\n");
             break;
         }
 
@@ -96,9 +95,9 @@ int main(int ac, char **av, char **env)
             else if (pid == 0)
             {
                 /* Child process */
-                if (execve(av[0], av, env) == -1)
+                if (execvp(av[0], av) == -1)
                 {
-                    perror("execve");
+                    perror("execvp");
                     exit(EXIT_FAILURE);
                 }
             }
