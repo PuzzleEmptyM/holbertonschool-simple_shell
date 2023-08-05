@@ -7,29 +7,6 @@
 #define MAX_COMMAND_LENGTH 100
 #define MAX_ARGS 10
 
-extern char **environ; /* To access the environment variables */
-
-void handle_builtin_command(char *command, char **args)
-{
-    if (strcmp(command, "exit") == 0)
-    {
-        exit(EXIT_SUCCESS);
-    }
-    else if (strcmp(command, "cd") == 0)
-    {
-        if (args[1] != NULL)
-        {
-            if (chdir(args[1]) != 0)
-            {
-                perror("cd");
-            }
-        }
-    }
-    else
-    {
-        fprintf(stderr, "%s: command not found\n", command);
-    }
-}
 
 int is_builtin_command(char *command)
 {
@@ -38,23 +15,24 @@ int is_builtin_command(char *command)
         return 1;
     }
     return 0;
+
 }
 
-int main()
+int main(int ac, char **av, char **env)
 {
-    char input[MAX_COMMAND_LENGTH];
-    char *args[MAX_ARGS];
-    int status;
-    pid_t pid;
-    int argCount;
-    char *token;
+	char input[MAX_COMMAND_LENGTH];
+	char *args[MAX_ARGS];
+	int status;
+	pid_t pid;
+	char *command; 
+	char *token;
 
-    while (1)
-    {
-        /* printf("$ "); */
+	while (1)
+	{
+	/* printf("$ "); */
         fflush(stdout); /* Make sure the prompt is displayed before reading input */
 
-        /* Check if Ctrl+D (EOF) is encountered */
+       	/* Check if Ctrl+D (EOF) is encountered */
         if (fgets(input, sizeof(input), stdin) == NULL)
         {
             /*printf("\n");*/
@@ -64,21 +42,21 @@ int main()
         /* Remove the newline character from the input */
         input[strcspn(input, "\n")] = '\0';
 
-	/* Skip processing if input is empty */
-	if (strlen(input) == 0)
-	{
-		continue;
-	}
+        /* Skip processing if input is empty */
+        if (strlen(input) == 0)
+        {
+                continue;
+        }
 
         /* Tokenize the input into separate arguments */
         token = strtok(input, " ");
-        argCount = 0;
-        while (token != NULL && argCount < MAX_ARGS - 1)
+        ac = 0;
+        while (token != NULL && ac < MAX_ARGS - 1)
         {
-            args[argCount++] = token;
+            args[ac++] = token;
             token = strtok(NULL, " ");
         }
-        args[argCount] = NULL;
+        args[ac] = NULL;
 
         /* Check for the exit command */
         if (strcmp(args[0], "exit") == 0)
@@ -88,13 +66,28 @@ int main()
 
         /* Check for built-in commands */
         if (is_builtin_command(args[0]))
-        {
-            handle_builtin_command(args[0], args);
-            continue; /* Continue to the next iteration of the loop */
-        }
-
-        pid = fork();
-        if (pid < 0)
+	{
+    		if (strcmp(command, "exit") == 0)
+    		{
+       	 	exit(EXIT_SUCCESS);
+    		}
+    		else if (strcmp(command, "cd") == 0)
+    		{
+			if (av[1] != NULL)
+       			{
+				if (chdir(av[1]) != 0)
+				{
+				perror("cd");
+            			}
+        		}
+    		}
+	}
+	else
+	{
+		fprintf(stderr, "%s: command not found\n", command);
+	}
+	pid = fork();
+	if (pid < 0)
         {
             perror("fork");
             exit(EXIT_FAILURE);
@@ -117,3 +110,4 @@ int main()
 
     return 0;
 }
+
