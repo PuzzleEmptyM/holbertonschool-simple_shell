@@ -91,6 +91,7 @@ int main(int ac, char **av, char **env)
                     if (chdir(tmp_av[1]) != 0)
                     {
                         perror("cd");
+                        exit_status = 1; /* Set exit status to 1 for errors in built-in commands */
                     }
                 }
             }
@@ -113,6 +114,7 @@ int main(int ac, char **av, char **env)
             if (pid < 0)
             {
                 perror("fork");
+                exit_status = 1; /* Set exit status to 1 for errors in fork */
                 exit(EXIT_FAILURE);
             }
             else if (pid == 0)
@@ -121,6 +123,7 @@ int main(int ac, char **av, char **env)
                 if (execvp(av[0], av) == -1)
                 {
                     perror("execvp");
+                    exit_status = 127; /* Indicates command not found */
                     exit(EXIT_FAILURE);
                 }
             }
