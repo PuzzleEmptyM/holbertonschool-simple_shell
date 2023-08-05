@@ -32,6 +32,7 @@ int main(int ac, char **av, char **env)
     pid_t pid;
     char *tmp_av[MAX_ARGS + 1]; /* Temporary array of character pointers for command arguments */
     char *token;
+    int has_token;
 
     while (1)
     {
@@ -55,14 +56,17 @@ int main(int ac, char **av, char **env)
         /* Tokenize the input into separate arguments and store them in tmp_av */
         token = strtok(input, " ");
         ac = 0;
+        has_token = 0;
+
         while (token != NULL && ac < MAX_ARGS)
         {
             tmp_av[ac++] = token;
+            has_token = 1;
             token = strtok(NULL, " ");
         }
 
         /* Check if there are no arguments */
-        if (ac == 0)
+        if (!has_token)
         {
             continue;
         }
