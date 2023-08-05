@@ -33,6 +33,7 @@ int main(int ac, char **av, char **env)
     char *tmp_av[MAX_ARGS + 1]; /* Temporary array of character pointers for command arguments */
     char *token;
     int has_token;
+    int exit_status = 0; /* Variable to store the exit status */
 
     while (1)
     {
@@ -76,7 +77,8 @@ int main(int ac, char **av, char **env)
         /* Check for the exit command */
         if (strcmp(tmp_av[0], "exit") == 0)
         {
-            exit(EXIT_SUCCESS);
+            exit_status = 0; /* Set the exit status to 0 as it's a normal termination */
+            break; /* Exit the while loop and terminate the shell */
         }
 
         /* Check for built-in commands */
@@ -131,16 +133,15 @@ int main(int ac, char **av, char **env)
                 if (WIFEXITED(status))
                 {
                     /* Get the exit status of the child process */
-                    int exit_status = WEXITSTATUS(status);
-                    printf("status[%d]\n", exit_status);
+                    exit_status = WEXITSTATUS(status);
                 }
                 else
                 {
-                    printf("status[1]\n"); /* Status 1 indicates an error in the child process */
+                    exit_status = 1; /* Status 1 indicates an error in the child process */
                 }
             }
         }
     }
 
-    return 0;
+    return exit_status; /* Return the exit status of the last executed command */
 }
