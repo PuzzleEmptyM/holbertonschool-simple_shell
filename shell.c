@@ -122,6 +122,18 @@ int main(int ac, char **av, char **env)
             {
                 /* Parent process */
                 wait(&status);
+
+                /* Check if the process terminated normally or with an error */
+                if (WIFEXITED(status))
+                {
+                    /* Get the exit status of the child process */
+                    int exit_status = WEXITSTATUS(status);
+                    printf("status[%d]\n", exit_status);
+                }
+                else
+                {
+                    printf("status[1]\n"); /* Status 1 indicates an error in the child process */
+                }
             }
         }
     }
