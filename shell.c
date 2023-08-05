@@ -50,9 +50,13 @@ int main(int ac, char **av, char **env)
             continue;
         }
 
-        /* Tokenize the input into separate arguments and store them in av */
+        /* Tokenize the input into separate arguments */
         token = strtok(input, " ");
         ac = 0;
+
+        /* Allocate memory for the av array dynamically */
+        av = (char **)malloc(sizeof(char *) * (MAX_COMMAND_LENGTH + 1));
+
         while (token != NULL && ac < MAX_COMMAND_LENGTH - 1)
         {
             av[ac++] = token;
@@ -63,6 +67,8 @@ int main(int ac, char **av, char **env)
         /* Check for the exit command */
         if (strcmp(av[0], "exit") == 0)
         {
+            /* Free allocated memory before exit */
+	    free(av);
             exit(EXIT_SUCCESS);
         }
 
@@ -107,6 +113,9 @@ int main(int ac, char **av, char **env)
                 wait(&status);
             }
         }
+
+        /* Free allocated memory for av after each command */
+        free(av);
     }
 
     return 0;
