@@ -5,37 +5,41 @@
 #include <sys/wait.h>
 
 #define MAX_COMMAND_LENGTH 100
-#define MAX_ARGS 10
-
 
 int is_builtin_command(char *command)
 {
-    if (strcmp(command, "exit") == 0 || strcmp(command, "cd") == 0)
+    if (strcmp(command, "exit") == 0 || strcmp(command, "cd") == 0 || strcmp(command, "env") == 0)
     {
         return 1;
     }
     return 0;
+}
 
+void print_environment(char **env)
+{
+    while (*env != NULL)
+    {
+        printf("%s\n", *env);
+        env++;
+    }
 }
 
 int main(int ac, char **av, char **env)
 {
-	char input[MAX_COMMAND_LENGTH];
-	char *args[MAX_ARGS];
-	int status;
-	pid_t pid;
-	char *command; 
-	char *token;
+    char input[MAX_COMMAND_LENGTH];
+    int status;
+    pid_t pid;
+    char *token;
 
-	while (1)
-	{
-	/* printf("$ "); */
+    while (1)
+    {
+        printf("$ ");
         fflush(stdout); /* Make sure the prompt is displayed before reading input */
 
-       	/* Check if Ctrl+D (EOF) is encountered */
+        /* Check if Ctrl+D (EOF) is encountered */
         if (fgets(input, sizeof(input), stdin) == NULL)
         {
-            /*printf("\n");*/
+            printf("\n");
             break;
         }
 
@@ -45,69 +49,67 @@ int main(int ac, char **av, char **env)
         /* Skip processing if input is empty */
         if (strlen(input) == 0)
         {
-                continue;
+            continue;
         }
 
-        /* Tokenize the input into separate arguments */
+        /* Tokenize the input into separate arguments and store them in av */
         token = strtok(input, " ");
         ac = 0;
-        while (token != NULL && ac < MAX_ARGS - 1)
+        while (token != NULL && ac < MAX_COMMAND_LENGTH - 1)
         {
-            args[ac++] = token;
+            av[ac++] = token;
             token = strtok(NULL, " ");
         }
-        args[ac] = NULL;
+        av[ac] = NULL;
 
         /* Check for the exit command */
-        if (strcmp(args[0], "exit") == 0)
+        if (strcmp(av[0], "exit") == 0)
         {
             exit(EXIT_SUCCESS);
         }
 
         /* Check for built-in commands */
-        if (is_builtin_command(args[0]))
-	{
-    		if (strcmp(command, "exit") == 0)
-    		{
-       	 	exit(EXIT_SUCCESS);
-    		}
-    		else if (strcmp(command, "cd") == 0)
-    		{
-			if (av[1] != NULL)
-       			{
-				if (chdir(av[1]) != 0)
-				{
-				perror("cd");
-            			}
-        		}
-    		}
-	}
-	else
-	{
-		fprintf(stderr, "%s: command not found\n", command);
-	}
-	pid = fork();
-	if (pid < 0)
+        if (is_builtin_command(av[0]))
         {
-            perror("fork");
-            exit(EXIT_FAILURE);
-        }
-        else if (pid == 0)
-        {
-            /* Child process */
-            if (execvp(args[0], args) == -1)
+            if (strcmp(av[0], "cd") == 0)
             {
-                perror("execvp");
-                exit(EXIT_FAILURE);
+                if (ac > 1)
+                {
+                    if (chdir(av[1]) != 0)
+                    {
+                        perror("cd");
+                    }
+                }
+            }
+            else if (strcmp(av[0], "env") == 0)
+            {
+                print_environment(env);
             }
         }
         else
         {
-            /* Parent process */
-            wait(&status);
+            pid = fork();
+            if (pid < 0)
+            {
+                perror("fork");
+                exit(EXIT_FAILURE);
+            }
+            else if (pid == 0)
+            {
+                /* Child process */
+                if (execve(av[0], av, env) == -1)
+                {
+                    perror("execve");
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else
+            {
+                /* Parent process */
+                wait(&status);
+            }
         }
     }
 
     return 0;
 }
-
