@@ -33,7 +33,6 @@ int main(int ac, char **av, char **env)
 
     while (1)
     {
-        printf("$ ");
         fflush(stdout); /* Make sure the prompt is displayed before reading input */
 
         /* Check if Ctrl+D (EOF) is encountered */
