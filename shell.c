@@ -5,6 +5,7 @@
 #include <sys/wait.h>
 
 #define MAX_COMMAND_LENGTH 100
+#define MAX_ARGS 10
 
 int is_builtin_command(char *command)
 {
@@ -29,6 +30,7 @@ int main(int ac, char **av, char **env)
     char input[MAX_COMMAND_LENGTH];
     int status;
     pid_t pid;
+    char *tmp_av[MAX_ARGS + 1]; /* Temporary array of character pointers for command arguments */
     char *token;
 
     while (1)
@@ -50,48 +52,57 @@ int main(int ac, char **av, char **env)
             continue;
         }
 
-        /* Tokenize the input into separate arguments */
+        /* Tokenize the input into separate arguments and store them in tmp_av */
         token = strtok(input, " ");
         ac = 0;
-
-        /* Allocate memory for the av array dynamically */
-        av = (char **)malloc(sizeof(char *) * (MAX_COMMAND_LENGTH + 1));
-
-        while (token != NULL && ac < MAX_COMMAND_LENGTH - 1)
+        while (token != NULL && ac < MAX_ARGS)
         {
-            av[ac++] = token;
+            tmp_av[ac++] = token;
             token = strtok(NULL, " ");
         }
-        av[ac] = NULL;
+
+        /* Check if there are no arguments */
+        if (ac == 0)
+        {
+            continue;
+        }
+
+        tmp_av[ac] = NULL;
 
         /* Check for the exit command */
-        if (strcmp(av[0], "exit") == 0)
+        if (strcmp(tmp_av[0], "exit") == 0)
         {
-            /* Free allocated memory before exit */
-	    free(av);
             exit(EXIT_SUCCESS);
         }
 
         /* Check for built-in commands */
-        if (is_builtin_command(av[0]))
+        if (is_builtin_command(tmp_av[0]))
         {
-            if (strcmp(av[0], "cd") == 0)
+            if (strcmp(tmp_av[0], "cd") == 0)
             {
                 if (ac > 1)
                 {
-                    if (chdir(av[1]) != 0)
+                    if (chdir(tmp_av[1]) != 0)
                     {
                         perror("cd");
                     }
                 }
             }
-            else if (strcmp(av[0], "env") == 0)
+            else if (strcmp(tmp_av[0], "env") == 0)
             {
                 print_environment(env);
             }
         }
         else
         {
+            /* Copy the arguments from tmp_av to av before executing the command */
+            int i;
+            for (i = 0; i < ac; i++)
+            {
+                av[i] = tmp_av[i];
+            }
+            av[ac] = NULL;
+
             pid = fork();
             if (pid < 0)
             {
@@ -113,9 +124,6 @@ int main(int ac, char **av, char **env)
                 wait(&status);
             }
         }
-
-        /* Free allocated memory for av after each command */
-        free(av);
     }
 
     return 0;
