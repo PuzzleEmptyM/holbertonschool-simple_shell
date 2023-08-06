@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <errno.h>
 
 #define MAX_COMMAND_LENGTH 100
 #define MAX_ARGS 10
@@ -33,7 +34,7 @@ int main(int ac, char **av, char **env)
     char *tmp_av[MAX_ARGS + 1]; /* Temporary array of character pointers for command arguments */
     char *token;
     int has_token;
-    int last_exit_status = 0; /* Variable to store the exit status of the last executed command */
+    int exit_status = 0; /* Variable to store the exit status */
 
     while (1)
     {
@@ -77,7 +78,7 @@ int main(int ac, char **av, char **env)
         /* Check for the exit command */
         if (strcmp(tmp_av[0], "exit") == 0)
         {
-            last_exit_status = 0; /* Set the exit status to 0 as it's a normal termination */
+            exit_status = 0; /* Set the exit status to 0 as it's a normal termination */
             break; /* Exit the while loop and terminate the shell */
         }
 
@@ -91,7 +92,7 @@ int main(int ac, char **av, char **env)
                     if (chdir(tmp_av[1]) != 0)
                     {
                         perror("cd");
-                        last_exit_status = 1; /* Set exit status to 1 for errors in built-in commands */
+                        exit_status = 1; /* Set exit status to 1 for errors in built-in commands */
                     }
                 }
             }
@@ -114,7 +115,7 @@ int main(int ac, char **av, char **env)
             if (pid < 0)
             {
                 perror("fork");
-                last_exit_status = 1; /* Set exit status to 1 for errors in fork */
+                exit_status = 1; /* Set exit status to 1 for errors in fork */
                 exit(EXIT_FAILURE);
             }
             else if (pid == 0)
@@ -122,8 +123,8 @@ int main(int ac, char **av, char **env)
                 /* Child process */
                 if (execvp(av[0], av) == -1)
                 {
-                    perror("execvp");
-                    last_exit_status = 127; /* Indicates command not found */
+                    perror(av[0]); /* Print the error message with the command name */
+                    exit_status = 127; /* Indicates command not found */
                     exit(EXIT_FAILURE);
                 }
             }
@@ -136,15 +137,15 @@ int main(int ac, char **av, char **env)
                 if (WIFEXITED(status))
                 {
                     /* Get the exit status of the child process */
-                    last_exit_status = WEXITSTATUS(status);
+                    exit_status = WEXITSTATUS(status);
                 }
                 else
                 {
-                    last_exit_status = 1; /* Status 1 indicates an error in the child process */
+                    exit_status = 1; /* Status 1 indicates an error in the child process */
                 }
             }
         }
     }
-    /* Print the exit status to standard error (stderr) before terminating */
-    return last_exit_status; /* Return the exit status of the last executed command */
+
+    return exit_status; /* Return the exit status of the last executed command */
 }
