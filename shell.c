@@ -33,7 +33,7 @@ int main(int ac, char **av, char **env)
     char *tmp_av[MAX_ARGS + 1]; /* Temporary array of character pointers for command arguments */
     char *token;
     int has_token;
-    int exit_status = 0; /* Variable to store the exit status */
+    int last_exit_status = 0; /* Variable to store the exit status of the last executed command */
 
     while (1)
     {
@@ -77,7 +77,7 @@ int main(int ac, char **av, char **env)
         /* Check for the exit command */
         if (strcmp(tmp_av[0], "exit") == 0)
         {
-            exit_status = 0; /* Set the exit status to 0 as it's a normal termination */
+            last_exit_status = 0; /* Set the exit status to 0 as it's a normal termination */
             break; /* Exit the while loop and terminate the shell */
         }
 
@@ -91,7 +91,7 @@ int main(int ac, char **av, char **env)
                     if (chdir(tmp_av[1]) != 0)
                     {
                         perror("cd");
-                        exit_status = 1; /* Set exit status to 1 for errors in built-in commands */
+                        last_exit_status = 1; /* Set exit status to 1 for errors in built-in commands */
                     }
                 }
             }
@@ -114,7 +114,7 @@ int main(int ac, char **av, char **env)
             if (pid < 0)
             {
                 perror("fork");
-                exit_status = 1; /* Set exit status to 1 for errors in fork */
+                last_exit_status = 1; /* Set exit status to 1 for errors in fork */
                 exit(EXIT_FAILURE);
             }
             else if (pid == 0)
@@ -123,7 +123,7 @@ int main(int ac, char **av, char **env)
                 if (execvp(av[0], av) == -1)
                 {
                     perror("execvp");
-                    exit_status = 127; /* Indicates command not found */
+                    last_exit_status = 127; /* Indicates command not found */
                     exit(EXIT_FAILURE);
                 }
             }
@@ -136,15 +136,15 @@ int main(int ac, char **av, char **env)
                 if (WIFEXITED(status))
                 {
                     /* Get the exit status of the child process */
-                    exit_status = WEXITSTATUS(status);
+                    last_exit_status = WEXITSTATUS(status);
                 }
                 else
                 {
-                    exit_status = 1; /* Status 1 indicates an error in the child process */
+                    last_exit_status = 1; /* Status 1 indicates an error in the child process */
                 }
             }
         }
     }
 
-    return exit_status; /* Return the exit status of the last executed command */
+    return last_exit_status; /* Return the exit status of the last executed command */
 }
