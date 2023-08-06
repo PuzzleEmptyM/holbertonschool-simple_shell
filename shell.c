@@ -145,6 +145,7 @@ int main(int ac, char **av, char **env)
             }
         }
     }
-
+    /* Print the exit status to standard error (stderr) before terminating */
+    fprintf(stderr, "status[%d]\n", last_exit_status);
     return last_exit_status; /* Return the exit status of the last executed command */
 }
