@@ -1,0 +1,22 @@
+   .TH simple_shell 1 simple_shell\-0.1
+   .SH NAME
+   simple_shell \- a simplified clone of print format.
+   .SH SYNOPSIS
+   .B simple_shell has no flags available.
+   .SH DESCRIPTION
+   .B No Description Available Yet
+   .SH OPTIONS
+   .B simple_shell
+  .TP
+  .B ./
+  Enters the shell\n
+  .TP exit
+  .B
+  Exits the shell\n
+  .TP
+  .B ls
+  Lists files in the current directory\n
+  .SH FLOWCHART
+  .B https://docs.google.com/presentation/d/1UT3cUE48aRYqn1rHxrIY_juys03cm3VBaEnpQcm2RZU/edit?usp=sharing
+  .SH AUTHORS
+  .B Jake Velasquez, Puzzle Moser, Jagger VanWinkle
