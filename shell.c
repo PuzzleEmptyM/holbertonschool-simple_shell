@@ -3,7 +3,6 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
-#include <errno.h>
 
 #define MAX_COMMAND_LENGTH 100
 #define MAX_ARGS 10
@@ -34,7 +33,7 @@ int main(int ac, char **av, char **env)
     char *tmp_av[MAX_ARGS + 1]; /* Temporary array of character pointers for command arguments */
     char *token;
     int has_token;
-    int exit_status = 0; /* Variable to store the exit status */
+    int last_exit_status = 0; /* Variable to store the exit status of the last executed command */
 
     while (1)
     {
@@ -78,7 +77,7 @@ int main(int ac, char **av, char **env)
         /* Check for the exit command */
         if (strcmp(tmp_av[0], "exit") == 0)
         {
-            exit_status = 0; /* Set the exit status to 0 as it's a normal termination */
+            last_exit_status = 0; /* Set the exit status to 0 as it's a normal termination */
             break; /* Exit the while loop and terminate the shell */
         }
 
@@ -92,7 +91,7 @@ int main(int ac, char **av, char **env)
                     if (chdir(tmp_av[1]) != 0)
                     {
                         perror("cd");
-                        exit_status = 1; /* Set exit status to 1 for errors in built-in commands */
+                        last_exit_status = 1; /* Set exit status to 1 for errors in built-in commands */
                     }
                 }
             }
@@ -103,69 +102,49 @@ int main(int ac, char **av, char **env)
         }
         else
         {
-            /* Check if the file exists before executing it */
-            if (access(tmp_av[0], F_OK) == 0)
+            /* Copy the arguments from tmp_av to av before executing the command */
+            int i;
+            for (i = 0; i < ac; i++)
             {
-                /* Copy the arguments from tmp_av to av before executing the command */
-                int i;
-                for (i = 0; i < ac; i++)
-                {
-                    av[i] = tmp_av[i];
-                }
-                av[ac] = NULL;
+                av[i] = tmp_av[i];
+            }
+            av[ac] = NULL;
 
-                pid = fork();
-                if (pid < 0)
+            pid = fork();
+            if (pid < 0)
+            {
+                perror("fork");
+                last_exit_status = 1; /* Set exit status to 1 for errors in fork */
+                exit(EXIT_FAILURE);
+            }
+            else if (pid == 0)
+            {
+                /* Child process */
+                if (execvp(av[0], av) == -1)
                 {
-                    perror("fork");
-                    exit_status = 1; /* Set exit status to 1 for errors in fork */
+                    perror("execvp");
+                    last_exit_status = 127; /* Indicates command not found */
                     exit(EXIT_FAILURE);
-                }
-                else if (pid == 0)
-                {
-                    /* Child process */
-                    if (execve(av[0], av, env) == -1)
-                    {
-                        fprintf(stderr, "./hsh: 1: %s: %s\n", av[0], strerror(errno)); /* Print the error message with the command name */
-                        exit_status = 127; /* Indicates command not found */
-                        exit(EXIT_FAILURE);
-                    }
-                }
-                else
-                {
-                    /* Parent process */
-                    wait(&status);
-
-                    /* Check if the process terminated normally or with an error */
-                    if (WIFEXITED(status))
-                    {
-                        /* Get the exit status of the child process */
-                        exit_status = WEXITSTATUS(status);
-                    }
-                    else
-                    {
-                        exit_status = 1; /* Status 1 indicates an error in the child process */
-                    }
                 }
             }
             else
             {
-                /* File not found */
-                fprintf(stderr, "./hsh: 1: %s: not found\n", tmp_av[0]);
-                exit_status = 127; /* Set exit status to 127 for command not found */
+                /* Parent process */
+                wait(&status);
+
+                /* Check if the process terminated normally or with an error */
+                if (WIFEXITED(status))
+                {
+                    /* Get the exit status of the child process */
+                    last_exit_status = WEXITSTATUS(status);
+                }
+                else
+                {
+                    last_exit_status = 1; /* Status 1 indicates an error in the child process */
+                }
             }
-	}
-
-	if (WIFEXITED(status))
-        {
-            exit_status = WEXITSTATUS(status);
         }
-        else
-        {
-            exit_status = 1; 
-
-	}
     }
 
-    return exit_status; /* Return the exit status of the last executed command */
+    return last_exit_status; /* Return the exit status of the last executed command */
 }
