@@ -103,46 +103,56 @@ int main(int ac, char **av, char **env)
         }
         else
         {
-            /* Copy the arguments from tmp_av to av before executing the command */
-            int i;
-            for (i = 0; i < ac; i++)
+            /* Check if the file exists before executing it */
+            if (access(tmp_av[0], F_OK) == 0)
             {
-                av[i] = tmp_av[i];
-            }
-            av[ac] = NULL;
-
-            pid = fork();
-            if (pid < 0)
-            {
-                perror("fork");
-                exit_status = 1; /* Set exit status to 1 for errors in fork */
-                exit(EXIT_FAILURE);
-            }
-            else if (pid == 0)
-            {
-                /* Child process */
-                if (execvp(av[0], av) == -1)
+                /* Copy the arguments from tmp_av to av before executing the command */
+                int i;
+                for (i = 0; i < ac; i++)
                 {
-                    perror(av[0]); /* Print the error message with the command name */
-                    exit_status = 127; /* Indicates command not found */
+                    av[i] = tmp_av[i];
+                }
+                av[ac] = NULL;
+
+                pid = fork();
+                if (pid < 0)
+                {
+                    perror("fork");
+                    exit_status = 1; /* Set exit status to 1 for errors in fork */
                     exit(EXIT_FAILURE);
+                }
+                else if (pid == 0)
+                {
+                    /* Child process */
+                    if (execvp(av[0], av) == -1)
+                    {
+                        perror(av[0]); /* Print the error message with the command name */
+                        exit_status = 127; /* Indicates command not found */
+                        exit(EXIT_FAILURE);
+                    }
+                }
+                else
+                {
+                    /* Parent process */
+                    wait(&status);
+
+                    /* Check if the process terminated normally or with an error */
+                    if (WIFEXITED(status))
+                    {
+                        /* Get the exit status of the child process */
+                        exit_status = WEXITSTATUS(status);
+                    }
+                    else
+                    {
+                        exit_status = 1; /* Status 1 indicates an error in the child process */
+                    }
                 }
             }
             else
             {
-                /* Parent process */
-                wait(&status);
-
-                /* Check if the process terminated normally or with an error */
-                if (WIFEXITED(status))
-                {
-                    /* Get the exit status of the child process */
-                    exit_status = WEXITSTATUS(status);
-                }
-                else
-                {
-                    exit_status = 1; /* Status 1 indicates an error in the child process */
-                }
+                /* File not found */
+                fprintf(stderr, "%s: No such file or directory\n", tmp_av[0]);
+                exit_status = 1; /* Set exit status to 1 for errors */
             }
         }
     }
