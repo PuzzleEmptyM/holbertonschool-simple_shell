@@ -126,7 +126,7 @@ int main(int ac, char **av, char **env)
                     /* Child process */
                     if (execvp(av[0], av) == -1)
                     {
-                        fprintf(stderr, "%s: %s\n", av[0], strerror(errno)); /* Print the error message with the command name */
+                        fprintf(stderr, "./hsh: 1: %s: %s\n", av[0], strerror(errno)); /* Print the error message with the command name */
                         exit_status = 127; /* Indicates command not found */
                         exit(EXIT_FAILURE);
                     }
