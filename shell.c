@@ -124,7 +124,7 @@ int main(int ac, char **av, char **env)
                 else if (pid == 0)
                 {
                     /* Child process */
-                    if (execvp(av[0], av) == -1)
+                    if (execve(av[0], av, env) == -1)
                     {
                         fprintf(stderr, "./hsh: 1: %s: %s\n", av[0], strerror(errno)); /* Print the error message with the command name */
                         exit_status = 127; /* Indicates command not found */
@@ -154,7 +154,17 @@ int main(int ac, char **av, char **env)
                 fprintf(stderr, "./hsh: 1: %s: not found\n", tmp_av[0]);
                 exit_status = 127; /* Set exit status to 127 for command not found */
             }
+	}
+
+	if (WIFEXITED(status))
+        {
+            exit_status = WEXITSTATUS(status);
         }
+        else
+        {
+            exit_status = 1; 
+
+	}
     }
 
     return exit_status; /* Return the exit status of the last executed command */
