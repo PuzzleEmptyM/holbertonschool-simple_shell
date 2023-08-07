@@ -126,7 +126,7 @@ int main(int ac, char **av, char **env)
                     /* Child process */
                     if (execvp(av[0], av) == -1)
                     {
-                        perror(av[0]); /* Print the error message with the command name */
+                        fprintf(stderr, "%s: %s\n", av[0], strerror(errno)); /* Print the error message with the command name */
                         exit_status = 127; /* Indicates command not found */
                         exit(EXIT_FAILURE);
                     }
@@ -151,8 +151,8 @@ int main(int ac, char **av, char **env)
             else
             {
                 /* File not found */
-                fprintf(stderr, "%s: No such file or directory\n", tmp_av[0]);
-                exit_status = 1; /* Set exit status to 1 for errors */
+                fprintf(stderr, "./hsh: 1: %s: not found\n", tmp_av[0]);
+                exit_status = 127; /* Set exit status to 127 for command not found */
             }
         }
     }
