@@ -63,6 +63,7 @@ int main(int ac, char **av, char **env)
 	{
 		/* Make sure the prompt is displayed before reading input */
 		fflush(stdout);
+		signal( SIGINT, sig_hnd);
 		/* Check if Ctrl+D (EOF) is encountered */
 		if (fgets(input, sizeof(input), stdin) == NULL)
 		{
@@ -78,99 +79,98 @@ int main(int ac, char **av, char **env)
 			continue;
 		}
 
-        /* Tokenize the input into separate arguments and
-	 * store them in tmp_av */
-        token = strtok(input, " ");
-        ac = 0;
-        has_token = 0;
+		/* Tokenize the input into separate arguments and
+		 * * store them in tmp_av */
+		token = strtok(input, " ");
+		ac = 0;
+		has_token = 0;
 
-        while (token != NULL && ac < MAX_ARGS)
-        {
-            tmp_av[ac++] = token;
-            has_token = 1;
-            token = strtok(NULL, " ");
-        }
+		while (token != NULL && ac < MAX_ARGS)
+		{
+			tmp_av[ac++] = token;
+			has_token = 1;
+			token = strtok(NULL, " ");
+		}
 
-        /* Check if there are no arguments */
-        if (!has_token)
-        {
-            continue;
-        }
+		/* Check if there are no arguments */
+		if (!has_token)
+		{
+			continue;
+		}
 
-        tmp_av[ac] = NULL;
+		tmp_av[ac] = NULL;
 
-        /* Check for the exit command */
-        if (strcmp(tmp_av[0], "exit") == 0)
-        {
-	    /* Set the exit status to 0 as it's a normal termination */
-            last_exit_status = 0; 
-            break; /* Exit the while loop and terminate the shell */
-        }
+		/* Check for the exit command */
+		if (strcmp(tmp_av[0], "exit") == 0)
+		{
+			/* Set the exit status to 0 as it's a normal termination */
+			last_exit_status = 0; 
+			break; /* Exit the while loop and terminate the shell */
+		}
 
-        /* Check for built-in commands */
-        if (is_builtin_command(tmp_av[0]))
-        {
-            if (strcmp(tmp_av[0], "cd") == 0)
-            {
-                if (ac > 1)
-                {
-                    if (chdir(tmp_av[1]) != 0)
-                    {
-                        perror("cd");
-                        last_exit_status = 1; /* Set exit status to 1 for errors in built-in commands */
-                    }
-                }
-            }
-            else if (strcmp(tmp_av[0], "env") == 0)
-            {
-                print_environment(env);
-            }
-        }
-        else
-        {
-            /* Copy the arguments from tmp_av to av before executing the command */
-            int i;
-            for (i = 0; i < ac; i++)
-            {
-                av[i] = tmp_av[i];
-            }
-            av[ac] = NULL;
+		/* Check for built-in commands */
+		if (is_builtin_command(tmp_av[0]))
+		{
+			if (strcmp(tmp_av[0], "cd") == 0)
+			{
+				if (ac > 1)
+				{
+					if (chdir(tmp_av[1]) != 0)
+					{
+						perror("cd");
+						last_exit_status = 1; /* Set exit status to 1 for errors in built-in commands */
+					}
+				}
+			}
+			else if (strcmp(tmp_av[0], "env") == 0)
+			{
+				print_environment(env);
+			}
+		}
+		else
+		{
+			/* Copy the arguments from tmp_av to av before executing the command */
+			int i;
+			for (i = 0; i < ac; i++)
+			{
+				av[i] = tmp_av[i];
+			}
+			av[ac] = NULL;
 
-            pid = fork();
-            if (pid < 0)
-            {
-                perror("fork");
-                last_exit_status = 1; /* Set exit status to 1 for errors in fork */
-                exit(EXIT_FAILURE);
-            }
-            else if (pid == 0)
-            {
-                /* Child process */
-                if (execvp(av[0], av) == -1)
-                {
-                    perror("execvp");
-                    last_exit_status = 127; /* Indicates command not found */
-                    exit(EXIT_FAILURE);
-                }
-            }
-            else
-            {
-                /* Parent process */
-                wait(&status);
+			pid = fork();
+			if (pid < 0)
+			{
+				perror("fork");
+				last_exit_status = 1; /* Set exit status to 1 for errors in fork */
+				exit(EXIT_FAILURE);
+			}
+			else if (pid == 0)
+			{
+				/* Child process */
+				if (execvp(av[0], av) == -1)
+				{
+					perror("execvp");
+					last_exit_status = 127; /* Indicates command not found */
+					exit(EXIT_FAILURE);
+				}
+			}
+			else
+			{
+				/* Parent process */
+				wait(&status);
 
-                /* Check if the process terminated normally or with an error */
-                if (WIFEXITED(status))
-                {
-                    /* Get the exit status of the child process */
-                    last_exit_status = WEXITSTATUS(status);
-                }
-                else
-                {
-                    last_exit_status = 1; /* Status 1 indicates an error in the child process */
-                }
-            }
-        }
-    }
-
-    return last_exit_status; /* Return the exit status of the last executed command */
+				/* Check if the process terminated normally or with an error */
+				if (WIFEXITED(status))
+				{
+					/* Get the exit status of the child process */
+					last_exit_status = WEXITSTATUS(status);
+				}
+				else
+				{
+					last_exit_status = 1; /* Status 1 indicates an error in the child process */
+				}
+			}
+		}
+	}
+	return last_exit_status; /* Return the exit status of the last executed command */
 }
