@@ -8,7 +8,7 @@ simple_shell \- a simplified clone of print format.
 .SH OPTIONS
 .B simple_shell
 .TP
-.B ./
+.B ./hsh
 Enters the shell\n
 .TP exit
 .B
