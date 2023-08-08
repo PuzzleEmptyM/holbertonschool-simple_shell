@@ -6,7 +6,8 @@
 
 #define MAX_COMMAND_LENGTH 100
 #define MAX_ARGS 10
-/*
+
+/**
  * is_builtin_command - determines whether given command is built-in or not
  * print_environment - prints the environment variables that are passed to the program when it starts
  * main - the main shell function!
