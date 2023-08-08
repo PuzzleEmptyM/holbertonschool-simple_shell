@@ -9,7 +9,7 @@ To run the shell program:<br />
 
 Try some built in commands like:<br /> 
 `ls, touch, mkdir, cd, env, clear, exit, etc`<br /> 
-*Also try any flags for above functions*
+*Also try any flags for above functions* 
 
 To exit the shell type:<br /> 
 `exit, CTR+D`
