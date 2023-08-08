@@ -15,16 +15,16 @@
 
 int is_builtin_command(char *command)
 {
-	if (strcmp(command, "exit") == 0 || strcmp(command, "clear") 
+	if (strcmp(command, "exit") == 0 || strcmp(command, "clear")
 	== 0 || strcmp(command, "cd") == 0 || strcmp(command, "env") == 0)
 	{
-		return(1);
+		return (1);
 	}
-	return(0);
+	return (0);
 }
 
 /**
- * print_environment - prints the environment variables that are 
+ * print_environment - prints the environment variables that are
  * passed to the program when it starts
  * @env: array of strings that contain environment variables
  * Return: nothing
@@ -53,16 +53,16 @@ int main(int ac, char **av, char **env)
 	int status;
 	pid_t pid;
 	/* Temporary array of character pointers for command arguments */
-	char *tmp_av[MAX_ARGS + 1]; 
+	char *tmp_av[MAX_ARGS + 1];
 	char *token;
 	int has_token;
 	/* Variable to store the exit status of the last executed command */
-	int last_exit_status = 0; 
+	int last_exit_status = 0;
 
 	while (1)
 	{
-		fflush(stdout); /* Make sure the prompt is displayed before reading input */
-
+		/* Make sure the prompt is displayed before reading input */
+		fflush(stdout);
 		/* Check if Ctrl+D (EOF) is encountered */
 		if (fgets(input, sizeof(input), stdin) == NULL)
 		{
@@ -78,7 +78,8 @@ int main(int ac, char **av, char **env)
 			continue;
 		}
 
-        /* Tokenize the input into separate arguments and store them in tmp_av */
+        /* Tokenize the input into separate arguments and
+	 * store them in tmp_av */
         token = strtok(input, " ");
         ac = 0;
         has_token = 0;
@@ -101,7 +102,8 @@ int main(int ac, char **av, char **env)
         /* Check for the exit command */
         if (strcmp(tmp_av[0], "exit") == 0)
         {
-            last_exit_status = 0; /* Set the exit status to 0 as it's a normal termination */
+	    /* Set the exit status to 0 as it's a normal termination */
+            last_exit_status = 0; 
             break; /* Exit the while loop and terminate the shell */
         }
 
