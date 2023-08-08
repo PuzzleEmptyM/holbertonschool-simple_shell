@@ -9,8 +9,8 @@
 
 /**
  * is_builtin_command - determines whether given command is built-in or not
- * print_environment - prints the environment variables that are passed to the program when it starts
- * main - the main shell function!
+ * @command: the given command
+ * Return: 0
  */
 
 int is_builtin_command(char *command)
@@ -22,6 +22,13 @@ int is_builtin_command(char *command)
     return 0;
 }
 
+/**
+ * print_environment - prints the environment variables that are passed to the program when it starts
+ * @env: array of strings that contain environment variables
+ * Return: nothing
+ */
+
+
 void print_environment(char **env)
 {
     while (*env != NULL)
@@ -30,6 +37,15 @@ void print_environment(char **env)
         env++;
     }
 }
+
+/**
+ * main - the main shell function!
+ * @ac: argument count
+ * @av: array of character pointers
+ * @env: a pointer to an array of character pointers
+ * Return: the exit status of the last executed command.
+ */
+
 
 int main(int ac, char **av, char **env)
 {
