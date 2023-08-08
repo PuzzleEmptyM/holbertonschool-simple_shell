@@ -15,11 +15,11 @@
 
 int is_builtin_command(char *command)
 {
-    if (strcmp(command, "exit") == 0 || strcmp(command, "clear") == 0 || strcmp(command, "cd") == 0 || strcmp(command, "env") == 0)
-    {
-        return 1;
-    }
-    return 0;
+	if (strcmp(command, "exit") == 0 || strcmp(command, "clear") == 0 || strcmp(command, "cd") == 0 || strcmp(command, "env") == 0)
+	{
+		return 1;
+	}
+	return 0;
 }
 
 /**
@@ -28,14 +28,13 @@ int is_builtin_command(char *command)
  * Return: nothing
  */
 
-
 void print_environment(char **env)
 {
-    while (*env != NULL)
-    {
-        printf("%s\n", *env);
-        env++;
-    }
+	while (*env != NULL)
+	{
+		printf("%s\n", *env);
+		env++;
+	}
 }
 
 /**
@@ -46,35 +45,34 @@ void print_environment(char **env)
  * Return: the exit status of the last executed command.
  */
 
-
 int main(int ac, char **av, char **env)
 {
-    char input[MAX_COMMAND_LENGTH];
-    int status;
-    pid_t pid;
-    char *tmp_av[MAX_ARGS + 1]; /* Temporary array of character pointers for command arguments */
-    char *token;
-    int has_token;
-    int last_exit_status = 0; /* Variable to store the exit status of the last executed command */
+	char input[MAX_COMMAND_LENGTH];
+	int status;
+	pid_t pid;
+	char *tmp_av[MAX_ARGS + 1]; /* Temporary array of character pointers for command arguments */
+	char *token;
+	int has_token;
+	int last_exit_status = 0; /* Variable to store the exit status of the last executed command */
 
-    while (1)
-    {
-        fflush(stdout); /* Make sure the prompt is displayed before reading input */
+	while (1)
+	{
+		fflush(stdout); /* Make sure the prompt is displayed before reading input */
 
-        /* Check if Ctrl+D (EOF) is encountered */
-        if (fgets(input, sizeof(input), stdin) == NULL)
-        {
-            break;
-        }
+		/* Check if Ctrl+D (EOF) is encountered */
+		if (fgets(input, sizeof(input), stdin) == NULL)
+		{
+			break;
+		}
 
-        /* Remove the newline character from the input */
-        input[strcspn(input, "\n")] = '\0';
+		/* Remove the newline character from the input */
+		input[strcspn(input, "\n")] = '\0';
 
-        /* Skip processing if input is empty */
-        if (strlen(input) == 0)
-        {
-            continue;
-        }
+		/* Skip processing if input is empty */
+		if (strlen(input) == 0)
+		{
+			continue;
+		}
 
         /* Tokenize the input into separate arguments and store them in tmp_av */
         token = strtok(input, " ");
