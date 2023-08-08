@@ -1,16 +1,17 @@
-#ifndef _SHELL_H_
-#define _SHELL_H_
+#ifndef SHELL_H
+#define SHELL_H
 
-/**=============================*/
-/**====== LIBRARIES USED =======*/
-/**=============================*/
-
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
+
+#define MAX_COMMAND_LENGTH 100
+#define MAX_ARGS 10
+
+int is_builtin_command(char *command);
+void print_environment(char **env);
+int execute_external_command(char **av, int *last_exit_status);
 
 #endif
