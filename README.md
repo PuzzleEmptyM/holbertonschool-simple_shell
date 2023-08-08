@@ -8,11 +8,10 @@ To run the shell program:
 ./hsh
 
 Try some built in commands like:
-cd, env, clear, exit
+`cd, env, clear, exit`
 
 To exit the shell type:
-exit
-CTR+D
+`exit, CTR+D`
 
 Flowchart:
 https://docs.google.com/presentation/d/1UT3cUE48aRYqn1rHxrIY_juys03cm3VBaEnpQcm2RZU/edit?usp=sharing
