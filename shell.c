@@ -63,7 +63,6 @@ int main(int ac, char **av, char **env)
 	{
 		/* Make sure the prompt is displayed before reading input */
 		fflush(stdout);
-		signal( SIGINT, sig_hnd);
 		/* Check if Ctrl+D (EOF) is encountered */
 		if (fgets(input, sizeof(input), stdin) == NULL)
 		{
@@ -79,8 +78,8 @@ int main(int ac, char **av, char **env)
 			continue;
 		}
 
-		/* Tokenize the input into separate arguments and
-		 * * store them in tmp_av */
+		/* Tokenize the input into separate arguments and */
+		/* store them in tmp_av                           */
 		token = strtok(input, " ");
 		ac = 0;
 		has_token = 0;
@@ -104,7 +103,7 @@ int main(int ac, char **av, char **env)
 		if (strcmp(tmp_av[0], "exit") == 0)
 		{
 			/* Set the exit status to 0 as it's a normal termination */
-			last_exit_status = 0; 
+			last_exit_status = 0;
 			break; /* Exit the while loop and terminate the shell */
 		}
 
@@ -118,7 +117,9 @@ int main(int ac, char **av, char **env)
 					if (chdir(tmp_av[1]) != 0)
 					{
 						perror("cd");
-						last_exit_status = 1; /* Set exit status to 1 for errors in built-in commands */
+						/* Set exit status to 1 for errors */
+						/* in built-in commands            */
+						last_exit_status = 1;
 					}
 				}
 			}
