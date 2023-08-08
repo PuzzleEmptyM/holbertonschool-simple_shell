@@ -6,10 +6,16 @@
 
 #define MAX_COMMAND_LENGTH 100
 #define MAX_ARGS 10
+/*
+ * is_builtin_command - determines whether given command is built-in or not
+ * print_environment - prints the environment variables that are passed to the program when it starts
+ *
+ *
+ */
 
 int is_builtin_command(char *command)
 {
-    if (strcmp(command, "exit") == 0 || strcmp(command, "cd") == 0 || strcmp(command, "env") == 0)
+    if (strcmp(command, "exit") == 0 || strcmp(command, "clear") == 0 || strcmp(command, "cd") == 0 || strcmp(command, "env") == 0)
     {
         return 1;
     }
