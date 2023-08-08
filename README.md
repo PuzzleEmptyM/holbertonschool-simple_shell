@@ -8,7 +8,8 @@ To run the shell program:<br />
 `./hsh`
 
 Try some built in commands like:<br /> 
-`cd, env, clear, exit`
+`ls, touch, mkdir, cd, env, clear, exit, etc`<br /> 
+*Also try any flags for above functions*
 
 To exit the shell type:<br /> 
 `exit, CTR+D`
