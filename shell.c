@@ -40,6 +40,18 @@ void print_environment(char **env)
 }
 
 /**
+ * prompt - returns to prompt. used to ignore SIGINT
+ * Return: nothing
+ */
+
+
+void prompt()
+{
+	printf("\n");
+	fflush(stdout);
+}
+
+/**
  * main - the main shell function!
  * @ac: argument count
  * @av: array of character pointers
@@ -63,6 +75,7 @@ int main(int ac, char **av, char **env)
 	{
 		/* Make sure the prompt is displayed before reading input */
 		fflush(stdout);
+		signal(SIGINT, prompt);
 		/* Check if Ctrl+D (EOF) is encountered */
 		if (fgets(input, sizeof(input), stdin) == NULL)
 		{
