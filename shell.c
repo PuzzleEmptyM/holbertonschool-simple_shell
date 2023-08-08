@@ -186,5 +186,5 @@ int main(int ac, char **av, char **env)
 			}
 		}
 	}
-	return last_exit_status; /* Return the exit status of the last executed command */
+	return (last_exit_status); /* Return the exit status of the last executed command */
 }
