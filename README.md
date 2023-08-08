@@ -14,6 +14,7 @@ To exit the shell type:
 `exit, CTR+D`
 
 Flowchart:
+<img width="735" alt="Screen Shot 2023-08-08 at 10 43 51 AM" src="https://github.com/PuzzleEmptyM/holbertonschool-simple_shell/assets/129412985/4662d6cf-fa5f-4fb4-8b7a-187d9a4498d1">
 https://docs.google.com/presentation/d/1UT3cUE48aRYqn1rHxrIY_juys03cm3VBaEnpQcm2RZU/edit?usp=sharing
 
 # _Description_
