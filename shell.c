@@ -15,15 +15,17 @@
 
 int is_builtin_command(char *command)
 {
-	if (strcmp(command, "exit") == 0 || strcmp(command, "clear") == 0 || strcmp(command, "cd") == 0 || strcmp(command, "env") == 0)
+	if (strcmp(command, "exit") == 0 || strcmp(command, "clear") 
+	== 0 || strcmp(command, "cd") == 0 || strcmp(command, "env") == 0)
 	{
-		return 1;
+		return(1);
 	}
-	return 0;
+	return(0);
 }
 
 /**
- * print_environment - prints the environment variables that are passed to the program when it starts
+ * print_environment - prints the environment variables that are 
+ * passed to the program when it starts
  * @env: array of strings that contain environment variables
  * Return: nothing
  */
@@ -50,10 +52,12 @@ int main(int ac, char **av, char **env)
 	char input[MAX_COMMAND_LENGTH];
 	int status;
 	pid_t pid;
-	char *tmp_av[MAX_ARGS + 1]; /* Temporary array of character pointers for command arguments */
+	/* Temporary array of character pointers for command arguments */
+	char *tmp_av[MAX_ARGS + 1]; 
 	char *token;
 	int has_token;
-	int last_exit_status = 0; /* Variable to store the exit status of the last executed command */
+	/* Variable to store the exit status of the last executed command */
+	int last_exit_status = 0; 
 
 	while (1)
 	{
