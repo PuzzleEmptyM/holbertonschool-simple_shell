@@ -5,4 +5,4 @@
 This program is a UNIX shell (a command-line interpreter). It's a recreation of it, allowing interactions from the user. This program can run commands and programs, just like the functionality of a simple UNIX shell.
 
 # _Description_
-##**Here's a list of what the shell can do:**
+##Here's a list of what the shell can do:
