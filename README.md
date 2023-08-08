@@ -4,16 +4,16 @@
 # _Introduction_
 This program is a UNIX shell (a command-line interpreter). It's a recreation of it, allowing interactions from the user. This program can run commands and programs, just like the functionality of a simple UNIX shell.
 
-To run the shell program:
-./hsh
+To run the shell program:\
+`./hsh`
 
-Try some built in commands like:
+Try some built in commands like:\
 `cd, env, clear, exit`
 
-To exit the shell type:
+To exit the shell type:\
 `exit, CTR+D`
 
-Flowchart:
+Flowchart:\
 <img width="735" alt="Screen Shot 2023-08-08 at 10 43 51 AM" src="https://github.com/PuzzleEmptyM/holbertonschool-simple_shell/assets/129412985/4662d6cf-fa5f-4fb4-8b7a-187d9a4498d1">
 https://docs.google.com/presentation/d/1UT3cUE48aRYqn1rHxrIY_juys03cm3VBaEnpQcm2RZU/edit?usp=sharing
 
