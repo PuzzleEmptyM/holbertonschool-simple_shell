@@ -9,8 +9,7 @@
 /*
  * is_builtin_command - determines whether given command is built-in or not
  * print_environment - prints the environment variables that are passed to the program when it starts
- *
- *
+ * main - the main shell function!
  */
 
 int is_builtin_command(char *command)
